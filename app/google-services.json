@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "824769067633",
+    "project_id": "bookapp-fd7a6",
+    "storage_bucket": "bookapp-fd7a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824769067633:android:f8b51d16eb7612cc3039d0",
+        "android_client_info": {
+          "package_name": "uz.gita_abdurakhmonov.bookapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwYi75Atr4jJqo8IB5fbbzbr_2REplKGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
