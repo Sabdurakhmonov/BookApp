@@ -1,9 +1,13 @@
 package uz.gita_abdurakhmonov.bookapp.screens.home.reader
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,24 +18,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.rizzi.bouquet.ResourceType
+import com.rizzi.bouquet.VerticalPDFReader
+import com.rizzi.bouquet.rememberHorizontalPdfReaderState
+import com.rizzi.bouquet.rememberVerticalPdfReaderState
+import okhttp3.internal.wait
 import uz.gita_abdurakhmonov.bookapp.R
 import uz.gita_abdurakhmonov.bookapp.ui.theme.Cl
-data class ReaderScreen(private val url:String):Screen {
+import java.io.File
+
+data class ReaderScreen(private val url: String) : Screen {
     @Composable
     override fun Content() {
-        val viewModel:ReaderContract.ViewModel = getViewModel<ReaderViewModel>()
+        val viewModel: ReaderContract.ViewModel = getViewModel<ReaderViewModel>()
         Log.d("AAA", "Content: $url")
-        ReaderScreenContent(url,viewModel::onEventDispatchers)
+        ReaderScreenContent(url, viewModel::onEventDispatchers)
     }
 }
 
@@ -39,9 +60,22 @@ data class ReaderScreen(private val url:String):Screen {
 @Composable
 fun ReaderScreenContent(
     url: String,
-    intent:()->Unit
-){
-    Box(modifier = Modifier.fillMaxSize()){
+    intent: () -> Unit
+) {
+    Log.d("AAA", "ReaderScreenContent: $url")
+    val pdfState = rememberVerticalPdfReaderState(
+        resource = ResourceType.Remote(url),
+        isZoomEnable = true
+    )
+    Box(modifier = Modifier.fillMaxSize()) {
+            VerticalPDFReader(
+                state = pdfState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.White)
+            )
+
+
         Box(
             modifier = Modifier
                 .padding(16.dp)
@@ -57,10 +91,17 @@ fun ReaderScreenContent(
                 painter = painterResource(id = R.drawable.ic_back),
                 contentDescription = "icon"
             )
+
         }
-        ResourceType.Remote(
-            url ="https://firebasestorage.googleapis.com/v0/b/bookapp-fd7a6.appspot.com/o/book9.pdf?alt=media&token=ed23fab3-1ba6-4d5b-9c60-bf5024230234",
-        )
+        if (!pdfState.isLoaded) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(60.dp)
+                    .align(Alignment.Center),
+                color = Cl.starColor
+            )
+        }
+
     }
 
 

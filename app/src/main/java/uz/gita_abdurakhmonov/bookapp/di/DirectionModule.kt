@@ -14,6 +14,8 @@ import uz.gita_abdurakhmonov.bookapp.screens.home.menu.MenuContract
 import uz.gita_abdurakhmonov.bookapp.screens.home.menu.MenuDirection
 import uz.gita_abdurakhmonov.bookapp.screens.home.reader.ReaderContract
 import uz.gita_abdurakhmonov.bookapp.screens.home.reader.ReaderDirection
+import uz.gita_abdurakhmonov.bookapp.screens.splash.SplashContract
+import uz.gita_abdurakhmonov.bookapp.screens.splash.SplashDirection
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -29,5 +31,8 @@ interface DirectionModule {
 
      @[Binds ViewModelScoped]
     fun bindsReaderDirection(impl:ReaderDirection):ReaderContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsSplashDirection(impl:SplashDirection):SplashContract.Direction
 
 }

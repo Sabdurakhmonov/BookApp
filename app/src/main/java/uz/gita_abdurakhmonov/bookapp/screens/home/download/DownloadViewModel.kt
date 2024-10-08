@@ -38,36 +38,12 @@ class DownloadViewModel @Inject constructor(
                     direction.back()
                 }
             }
-            is DownloadContract.Intent.ClickDownload->{
-                repository.downloadPdf(intent.data.pdfUrl,intent.data.bookTitle)
-                    .onStart { intent {reduce { state.copy(loading = true) }} }
-                    .onEach {
-                    it.onSuccess {
-                        path = it
-                        intent { reduce { state.copy(btnText = "Reader", loading = false) } }
-                    }.onFailure {
-                        Log.d("AAA", "onEventDispatchers: ${it.message}")
-                    }
-                }.onCompletion { intent { reduce { state.copy(loading = false) } }
-                }.launchIn(viewModelScope)
-            }
             is DownloadContract.Intent.ClickNext->{
                 viewModelScope.launch {
-                    direction.nextToReader(path)
+                    direction.nextToReader(intent.data.pdfUrl)
                 }
             }
         }
-    }
-
-    override fun checkData(data: BookData) {
-        repository.checkPdf(data.bookTitle).onEach {
-            it.onSuccess {
-                path = it
-                intent { reduce { state.copy(btnText = "Reader") } }
-            }.onFailure {
-                Log.d("AAA", "checkData: ${it.message}")
-            }
-        }.launchIn(viewModelScope)
     }
 
     override val container = container<DownloadContract.UIState, DownloadContract.SideEffect>(DownloadContract.UIState(null))

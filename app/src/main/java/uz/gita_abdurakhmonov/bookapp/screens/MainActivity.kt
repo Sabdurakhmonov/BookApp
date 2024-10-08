@@ -2,9 +2,12 @@ package uz.gita_abdurakhmonov.bookapp.screens
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,48 +28,25 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val STORAGE_PERMISSION_CODE = 100
+    private val READ_EXTERNAL_STORAGE_REQUEST_CODE = 1001
+
     @Inject
     lateinit var appNavigationHandler: NavigationHandler
+
     @SuppressLint("CoroutineCreationDuringComposition")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState)
-        checkAndRequestPermissions()
 
 //        enableEdgeToEdge()
         setContent {
-            Navigator(screen = MenuScreen){navigator ->
+            Navigator(screen = MenuScreen) { navigator ->
                 appNavigationHandler.screenState.onEach {
                     it.invoke(navigator)
                 }.launchIn(lifecycleScope)
                 CurrentScreen()
             }
-        }
-    }
-
-    private fun checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android 6.0 va undan yuqori versiyalar uchun
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-                // Ruxsat so'rash
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
-                    STORAGE_PERMISSION_CODE
-                )
-            } else {
-                // Ruxsatlar allaqachon berilgan
-
-            }
-        } else {
-            // Android 6.0 dan past versiyalar
-
         }
     }
 }

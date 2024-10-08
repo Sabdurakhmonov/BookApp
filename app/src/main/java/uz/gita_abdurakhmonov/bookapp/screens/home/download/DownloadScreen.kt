@@ -55,7 +55,6 @@ data class DownloadScreen(private val data: BookData) : Screen {
     @Composable
     override fun Content() {
         val viewModel: DownloadViewModel = getViewModel<DownloadViewModel>()
-        viewModel.checkData(data)
         val uiState = viewModel.collectAsState()
         DownloadScreenContent(data, uiState, viewModel::onEventDispatchers)
     }
@@ -208,11 +207,7 @@ fun DownloadScreenContent(
             onClick = {
                 btnText.value = uiState.value.btnText
                 intent.invoke(
-                    if (btnText.value == "Reader") {
-                        DownloadContract.Intent.ClickNext
-                    } else {
-                        DownloadContract.Intent.ClickDownload(data)
-                    }
+                    DownloadContract.Intent.ClickNext(data)
                 )
             },
             modifier = Modifier
@@ -230,7 +225,7 @@ fun DownloadScreenContent(
             if(uiState.value.loading){
                 CircularProgressIndicator(modifier = Modifier.size(32.dp), color = Cl.btnTextColor)
             }else{
-                Text(text = uiState.value.btnText)
+                Text(text = "Reader")
             }
         }
         Box(

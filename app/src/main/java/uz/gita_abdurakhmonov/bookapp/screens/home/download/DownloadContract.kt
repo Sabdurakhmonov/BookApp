@@ -6,7 +6,6 @@ import uz.gita_abdurakhmonov.bookapp.data.BookData
 interface DownloadContract {
     interface ViewModel:ContainerHost<UIState,SideEffect>{
         fun onEventDispatchers(intent: Intent)
-        fun checkData(data: BookData)
     }
     interface Direction{
         suspend fun back()
@@ -20,7 +19,6 @@ interface DownloadContract {
     data class SideEffect(val message:String)
     sealed interface Intent{
         data object ClickBack:Intent
-        data class ClickDownload(val data:BookData) :Intent
-        data object ClickNext:Intent
+        data class ClickNext(val data: BookData):Intent
     }
 }

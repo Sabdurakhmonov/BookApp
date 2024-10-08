@@ -47,55 +47,55 @@ class RepositoryImpl @Inject constructor(
     }
 
 
-    override fun downloadPdf(pdfUrl: String, name: String): Flow<Result<String>> = callbackFlow {
-        val client = OkHttpClient()
-
-        // HTTP so'rovini yaratish
-        val request = Request.Builder()
-            .url(pdfUrl)
-            .build()
-
-        // So'rovni bajarish
-        withContext(Dispatchers.IO) {
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    trySendBlocking(Result.failure(e))
-
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    // Yuklash muvaffaqiyatli bo'lsa
-                    if (!response.isSuccessful) {
-                        return
-                    }
-
-                    // Yuklangan faylni saqlash
-                    val pdfBytes = response.body?.byteStream()
-
-                    // Fayl saqlanish joyini tanlash (tashqi xotira)
-                    val directoryPath =
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                            .toString()
-
-                    // Foydalanuvchi tomonidan kiritilgan nom bilan fayl yaratish
-                    val file = File(directoryPath, "$name.pdf")
-
-                    try {
-                        // Faylni saqlash
-                        val outputStream = FileOutputStream(file)
-                        pdfBytes?.copyTo(outputStream)
-                        outputStream.close()
-                        trySendBlocking(Result.success(file.absolutePath))
-                        // Foydalanuvchiga xabar berish
-                    } catch (e: IOException) {
-                        trySendBlocking(Result.failure(e))
-
-                    }
-                }
-            })
-        }
-        awaitClose()
-    }
+//    override fun downloadPdf(pdfUrl: String, name: String): Flow<Result<String>> = callbackFlow {
+//        val client = OkHttpClient()
+//
+//        // HTTP so'rovini yaratish
+//        val request = Request.Builder()
+//            .url(pdfUrl)
+//            .build()
+//
+//        // So'rovni bajarish
+//        withContext(Dispatchers.IO) {
+//            client.newCall(request).enqueue(object : Callback {
+//                override fun onFailure(call: Call, e: IOException) {
+//                    trySendBlocking(Result.failure(e))
+//
+//                }
+//
+//                override fun onResponse(call: Call, response: Response) {
+//                    // Yuklash muvaffaqiyatli bo'lsa
+//                    if (!response.isSuccessful) {
+//                        return
+//                    }
+//
+//                    // Yuklangan faylni saqlash
+//                    val pdfBytes = response.body?.byteStream()
+//
+//                    // Fayl saqlanish joyini tanlash (tashqi xotira)
+//                    val directoryPath =
+//                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+//                            .toString()
+//
+//                    // Foydalanuvchi tomonidan kiritilgan nom bilan fayl yaratish
+//                    val file = File(directoryPath, "$name.pdf")
+//
+//                    try {
+//                        // Faylni saqlash
+//                        val outputStream = FileOutputStream(file)
+//                        pdfBytes?.copyTo(outputStream)
+//                        outputStream.close()
+//                        trySendBlocking(Result.success(file.path))
+//                        // Foydalanuvchiga xabar berish
+//                    } catch (e: IOException) {
+//                        trySendBlocking(Result.failure(e))
+//
+//                    }
+//                }
+//            })
+//        }
+//        awaitClose()
+//    }
 
     override fun checkPdf(name: String): Flow<Result<String>> = flow {
         Log.d("AAA", "checkPdf: $name")
@@ -110,7 +110,7 @@ class RepositoryImpl @Inject constructor(
         // Fayl mavjud yoki yo'qligini tekshirish
         if (file.exists()) {
             // Fayl mavjud bo'lsa, absolyut yo'lni qaytaradi
-            emit(Result.success(file.absolutePath))
+            emit(Result.success(file.path))
         } else {
             emit(Result.failure(Exception("topilmadi")))
         }
